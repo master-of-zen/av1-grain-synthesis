@@ -1,14 +1,14 @@
-use argparse::{parse_args, Args};
-
-pub struct NoiseModelArgs {}
-pub mod argparse;
-use image::io::Reader as ImageReader;
+use clap::{AppSettings, Parser};
 use rand::distributions::{Distribution, Normal};
-use std::fs::File;
-use std::io::{self, BufReader, Read};
 use std::path::PathBuf;
-use v_frame::plane::{Plane, PlaneData};
-use y4m::Frame;
+use v_frame::plane::Plane;
+
+#[derive(Parser, Debug)]
+#[clap(name = "av1-grain-synth", setting = AppSettings::DeriveDisplayOrder)]
+struct Args {
+    mean: f64,
+    std_dev: f64,
+}
 
 fn main() {
     //let parsed = argparse::parse_args();
