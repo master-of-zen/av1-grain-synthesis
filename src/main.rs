@@ -37,3 +37,20 @@ fn main() {
         .save(PathBuf::from("image").with_extension("png"))
         .unwrap();
 }
+
+fn get_block_mean_low_bd(block: Plane<u8>) -> f64 {
+    unimplemented!()
+}
+
+fn get_block_mean_high_bd(block: Plane<u16>) -> f64 {
+    unimplemented!()
+}
+
+/// Should be run on residual of denoised and original source
+fn get_noise_variance() -> f64 {
+    unimplemented!()
+}
+
+fn get_block_variance() -> f64 {
+    unimplemented!()
+}
