@@ -1,7 +1,10 @@
-use clap::{AppSettings, Arg, Parser};
+use clap::{AppSettings, Parser};
 use rand::distributions::{Distribution, Normal};
 use std::path::PathBuf;
+use v_frame::pixel::Pixel;
 use v_frame::plane::Plane;
+
+static LAG: u8 = 4;
 
 #[derive(Parser, Debug)]
 #[clap(name = "av1-grain-synth", setting = AppSettings::DeriveDisplayOrder)]
@@ -32,23 +35,36 @@ fn main() {
     println!("{:#?}", plane);
 
     let buf: Vec<_> = plane.iter().map(|p| p as u8).collect();
-    image::GrayImage::from_vec(plane.cfg.width as u32, plane.cfg.height as u32, buf)
-        .unwrap()
-        .save(PathBuf::from("image").with_extension("png"))
-        .unwrap();
+    // image::GrayImage::from_vec(plane.cfg.width as u32, plane.cfg.height as u32, buf)
+    //    .unwrap()
+    //    .save(PathBuf::from("image").with_extension("png"))
+    //    .unwrap();
+
+    let avg = get_block_mean(&plane);
+    let noise_mean = get_noise_variance(&plane);
+
+    dbg!(avg);
+    dbg!(noise_mean);
 }
 
-fn get_block_mean_low_bd(block: Plane<u8>) -> f64 {
-    unimplemented!()
-}
+fn get_block_mean(block: &Plane<u8>) -> u64 {
+    let mut sum = 0u64;
+    let total_pixels: u64 = (block.cfg.width * block.cfg.height) as u64;
 
-fn get_block_mean_high_bd(block: Plane<u16>) -> f64 {
-    unimplemented!()
+    block.data.iter().for_each(|x| sum += *x as u64);
+
+    (sum / total_pixels) as u64
 }
 
 /// Should be run on residual of denoised and original source
-fn get_noise_variance() -> f64 {
-    unimplemented!()
+fn get_noise_variance(block: &Plane<u8>) -> f64 {
+    let mut sum = 0u64;
+
+    block.data.iter().for_each(|x| sum += *x as u64 * *x as u64);
+
+    let mean = get_block_mean(&block);
+
+    return sum as f64 / (block.cfg.width * block.cfg.height) as f64 - (mean * mean) as f64;
 }
 
 fn get_block_variance() -> f64 {
