@@ -9,7 +9,7 @@ struct Args {
     #[clap(short, long, default_value_t = 0.5)]
     mean: f64,
 
-    #[clap(short, long, default_value_t = 0.3)]
+    #[clap(short, long, default_value_t = 0.1)]
     std_dev: f64,
 }
 
